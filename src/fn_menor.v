@@ -1,4 +1,4 @@
-module and1 (
+module fn_menor (
     output Y,
     input  a,
     input  b

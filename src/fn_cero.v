@@ -1,4 +1,6 @@
-module cero(
+//- Función *cero* de 32 bit. La entrada es una señal de 32 bit y la salida una señal de un bit, 
+//que vale $1$ cuando la señal de entrada vale cero.
+module fn_cero(
     input [31:0] a,     // Entrada de 32 bits
     output Y         // Salida de un bit
 );
