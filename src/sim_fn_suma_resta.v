@@ -2,11 +2,10 @@
 
 module sim_fn_suma_resta;
     // Declaración de señales
-    reg [31:0] a, b;  // Entradas de 32 bits
-    reg resta;            // Entrada de selección (0: suma, 1: resta)
-    wire [31:0] Y;    // Salida de 32 bits
-
-    // Instanciación del módulo bajo prueba (DUT: Device Under Test)
+    reg [31:0] a, b;  
+    reg resta;          
+    wire [31:0] Y;   
+    wire [31 : 0] aux;
     fn_suma_resta dut (
         .a(a),
         .b(b),

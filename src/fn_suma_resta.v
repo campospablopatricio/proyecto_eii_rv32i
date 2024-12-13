@@ -7,8 +7,10 @@ module fn_suma_resta (
     input           resta,
     output [31 : 0] Y
 );
-    assign Y = (resta == 0) ? a+b : a-b;
+
+    wire [31 : 0] aux;
+    assign aux = resta? ~b : b;
+    assign Y = a + aux + resta;
 endmodule
 
-//resta ponerle a s
 
