@@ -16,7 +16,7 @@ module sim_fn_suma_resta;
 
     // Bloque de simulación
     initial begin
-        // Configuración para volcado de ondas
+       
         $dumpfile("fn_suma_resta.vcd");
         $dumpvars(0, sim_fn_suma_resta);
 

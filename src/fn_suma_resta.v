@@ -4,8 +4,11 @@
 module fn_suma_resta (
     input  [31 : 0] a,
     input  [31 : 0] b,
-    input           S,
+    input           resta,
     output [31 : 0] Y
 );
-    assign Y = (S == 0) ? a+b : a-b;
+    assign Y = (resta == 0) ? a+b : a-b;
 endmodule
+
+//resta ponerle a s
+

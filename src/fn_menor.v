@@ -1,7 +1,15 @@
+//Función *MENOR QUE* de 32 bit para valores en binario natural y con signo complemento a dos. Incluye 
+//una entrada de selección, $0$ con signo y $1$ sin signo, dos entradas, $A$ y $B$, de 32 bit y una 
+//salida de un bit. 
+//La salida es $1$ si la entrada $A$ es menor que la entrada $B$ y $0$ caso contrario. 
+//La comparación se realiza considerando valores en binario natural o en complemento a dos según indique 
+//la entrada de selección.
+  
 module fn_menor (
-    output Y,
-    input  a,
-    input  b
+    input  [31 : 0] A,
+    input  [31 : 0] B,
+    input           menor,
+    output          Y
 );
-    assign Y = a & b;
+    assign assign y = ;
 endmodule
