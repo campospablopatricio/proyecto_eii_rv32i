@@ -6,10 +6,13 @@
 //la entrada de selección.
   
 module fn_menor (
-    input  [31 : 0] A,
-    input  [31 : 0] B,
-    input           menor,
+    input  [31 : 0] a,
+    input  [31 : 0] b,
+    input           sin_signo,
     output          Y
 );
-    assign assign y = ;
+    assign Y = sin_signo ? (a < b) : ($signed(a) < $signed(b));
 endmodule
+
+//otra forma de hacerlo, sin usar signed (propio de verilog), 
+//es con el bit mas significativo de a y b osea a[31] y b[31]
