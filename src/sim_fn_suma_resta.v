@@ -1,7 +1,6 @@
 `include "fn_suma_resta.v"
 
 module sim_fn_suma_resta;
-    // Declaración de señales
     reg [31:0] a, b;  
     reg resta;          
     wire [31:0] Y;   
