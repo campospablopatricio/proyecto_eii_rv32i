@@ -2,10 +2,10 @@
 //un valor de 5 bit. Ingresa ceros por la derecha.
 module fn_des_izq (
     input  [31 : 0] a,
-    input  [4 : 0] d,
+    input  [4 : 0] b,
     output [31 : 0] Y
    
     
 );
-    assign Y = a << d;
+    assign Y = a << b;
 endmodule

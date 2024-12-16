@@ -4,21 +4,21 @@
 `include "fn_des_izq.v"
 `include "fn_menor.v"
 `include "fn_or.v"
-`include "fn_suma.v"
+`include "fn_suma_resta.v"
 `include "fn_xor.v"
 
 module alu (
     input [31:0] a,
     input [31:0] b,
     input [3:0] sel,
-    output [31:0] Y,
+    output reg [31:0] Y,
     output zero
 );
 
     wire [31:0] y_and;
     wire [31:0] y_des_der;
     wire [31:0] y_des_izq;
-    wire [31:0] y_menor;
+    wire y_menor;
     wire [31:0] y_or;
     wire [31:0] y_suma_resta;
     wire [31:0] y_xor;
