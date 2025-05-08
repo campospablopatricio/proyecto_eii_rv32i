@@ -51,29 +51,19 @@ module sim_mef ;
     initial begin
         $dumpfile("mef.vcd");
         $dumpvars(0);
-        reset = 1;
-        op = 7'hxx;
-        ciclos(1);
+        reset = 1; op = 7'hxx; ciclos(1);
         reset = 0;
-        ciclos(1); // luego de reset está en ESCRIBE, pasa con esto a CARGA
-        op = 3;    // instrucción load (lw)
-        ciclos(5); // ciclo de instrucción
-        op = 19;   
-        ciclos(5);
-        op = 23;
-        ciclos(5); 
-        op = 35;
-        ciclos(5); 
-        op = 51;
-        ciclos(5); 
-        op = 55;
-        ciclos(5); 
-        op = 99;
-        ciclos(5); 
-        op = 103;
-        ciclos(5); 
-        op = 111;
-        ciclos(5);
+        ciclos(1); 
+
+        op = 3; ciclos(5); //tipo i: carga
+        op = 19; ciclos(5); //tipo i: alu inm
+        op = 23; ciclos(5); //tipo u: auipc
+        op = 35; ciclos(5); //tipo s: store
+        op = 51; ciclos(5); //tipo r: alu
+        op = 55; ciclos(5); //tipo u: lui
+        op = 99; ciclos(5); //tipo b:branch
+        op = 103; ciclos(5); //tipo i
+        op = 111; ciclos(5); //tipo j
         #10;
         $finish;
     end

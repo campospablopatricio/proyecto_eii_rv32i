@@ -16,17 +16,18 @@ module mef (
     input      [6:0] op,
     input       reset,
     input       clk
-);
+); 
+
+//Definincion de estados
     parameter [2:0] ESCRIBE = 0;
     parameter [2:0] CARGA = 1;
     parameter [2:0] DECODIFICA = 2;
     parameter [2:0] DIRECCION = 3;
     parameter [2:0] MEMORIA_EJECUTA = 4;
 
-    reg [2:0] estado_sig;
-    reg [2:0] estado;
+    reg [2:0] estado_sig, estado;
 
-    //Logica estado actual
+    //Registro de estado
     always @ (posedge clk)
     begin
         if(reset)
@@ -49,6 +50,7 @@ module mef (
     end
 
       always @ (*) begin
+        //valores por defecto
             esc_pc = 0;
             branch = 0;
             sel_dir = 0;
@@ -63,19 +65,19 @@ module mef (
             
             case(estado)
             CARGA: begin 
-                esc_inst = 1'b1 ;  //se carga lo de la salida de la ram en el R_inst
-                sel_op1  = 2'b00;  //estoy seleccionando el pc
-                sel_op2  = 2'b10;  //seleccion el 4
-                esc_pc   = 1'b1 ;  //para que se habilite R_pc y en el sig ciclo se habilite Y
-                sel_y    = 2'b01;  //
-                modo_alu = 2'b00;  //modo suma
+                esc_inst = 1'b1 ;  
+                sel_op1  = 2'b00;  
+                sel_op2  = 2'b10;  
+                esc_pc   = 1'b1 ;  
+                sel_y    = 2'b01;  
+                modo_alu = 2'b00;  
             end
 
-            DECODIFICA: ;          //Mantengo los valores por defecto y espero un ciclo para que se carguen los registros
+            DECODIFICA: ;          //se mantienen los valores por defecto y espero un ciclo para que se carguen los registros
             DIRECCION: 
                 case(op)
-                //los que no hacen nada
-                19,23,51,55: ;
+                19,23,51,55: ;                //No hacen nada
+
                 //Para los que acceden a memoria
                 3,103: begin                   //instruccion 3 y 103 tipo I
                     sel_inmediato = 3'b000;    //selecciono el tipo I
@@ -95,7 +97,7 @@ module mef (
                     sel_op1       =  2'b01;    //valor actual
                     modo_alu      =  2'b00;    //modo suma
                 end
-                111: begin                      //instruccion 111 tipo J
+                111: begin                     //instruccion 111 tipo J
                     sel_inmediato = 3'b100;    //selecciono el tipo J
                     sel_op2       =  2'b01;    //valor inmediato
                     sel_op1       =  2'b01;    //valor actual
