@@ -64,7 +64,7 @@ module alu (
     );
 
         fn_xor U_xor (
-        .Y (Y_xor),
+        .Y (y_xor),
         .a (a),
         .b (b)
     );
@@ -76,13 +76,13 @@ module alu (
 
     
     always @(*) begin
-        case (sel[3:1])
+        case (sel[3:1]) //el orden de las funciones fueron establecidas por el enunciado
         3'b000: Y = y_suma_resta;
         3'b001: Y = y_des_izq;
         3'b010: Y = y_menor;
         3'b011: Y = y_menor;
         3'b100: Y = y_xor;
-        3'b101: Y = y_desp_der;
+        3'b101: Y = y_des_der;
         3'b110: Y = y_or;
         3'b111: Y = y_and;
         endcase

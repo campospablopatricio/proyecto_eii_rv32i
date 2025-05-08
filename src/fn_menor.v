@@ -15,7 +15,3 @@ module fn_menor (
   assign Y = sin_signo ? (a < b) : ($signed(a) < $signed(b));
   
 endmodule
-
-//otra forma de hacerlo, sin usar signed (propio de verilog), 
-//es con el bit mas significativo de a y b osea a[31] y b[31] 
-//con signo para 0 y 1 caso contrario. 1 si a<b y 0 si b<a
