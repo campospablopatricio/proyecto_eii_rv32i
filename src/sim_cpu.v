@@ -18,7 +18,7 @@ module sim_cpu ;
         .reset(reset)
     );
 
-    Ram_512x32 #(.archivo("../src/programa_prueba.mem")) ram (
+    ram #(.archivo("../src/programa_prueba.mem")) ram (
         .dout(dat_lectura),    
         .addr(dir[10:2]),    
         .din (dat_escritura),    

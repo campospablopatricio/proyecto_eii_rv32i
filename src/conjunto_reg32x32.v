@@ -6,9 +6,9 @@ module conjunto_reg32x32 (
   input clk,
   input rst,
   input write_enable,
-  input [4:0] read_addr1, read_addr2, write_addr,
+  input [4:0] addr1, addr2, write_addr,
   input [31:0] write_data,
-  output [31:0] read_data1, read_data2
+  output [31:0] data1, data2
 );
 
   reg [31:0] memoria [31:0];
@@ -23,7 +23,7 @@ module conjunto_reg32x32 (
     else if (write_enable && write_addr != 0)// write_addr no puede ser 0 
       memoria[write_addr] <= write_data;
 
-  assign read_data1 = (read_addr1 != 0) ? memoria[read_addr1] : 0;
-  assign read_data2 = (read_addr2 != 0) ? memoria[read_addr2] : 0;
+  assign data1 = (addr1 != 0) ? memoria[addr1] : 0;
+  assign data2 = (addr2 != 0) ? memoria[addr2] : 0;
 
 endmodule

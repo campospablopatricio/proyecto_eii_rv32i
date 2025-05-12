@@ -2,12 +2,12 @@
 module sim_fn_des_izq ;
     integer i;
     reg [31:0] a;
-    reg [4:0] d;
+    reg [4:0] b;
     wire [31:0] Y;
     fn_des_izq dut (
         .Y (Y),
         .a (a),
-        .d (d)
+        .b (b)
     );
 
     initial begin
@@ -15,7 +15,7 @@ module sim_fn_des_izq ;
         $dumpvars(0);
         a =1 ;
      for (i=0;i<20;i = i + 5) begin
-            d = i;
+            b = i;
             #10;
      end
     

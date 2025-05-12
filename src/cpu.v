@@ -77,8 +77,8 @@ conjunto_reg32x32 conjunto_registros(
     .write_data(y),
     .clk(clk),
     .write_enable(esc_reg),
-    .dato1(rs1),
-    .dato2(rs2)
+    .data1(rs1),
+    .data2(rs2)
 );
 
 assign dat_escritura = rs2;
@@ -89,7 +89,7 @@ valor_inmediato valor_inmediato(
     .inmediato(inmediato)
 );
 
-control_ALU control_alu(
+control_alu control_alu(
     .sel_alu(fn_alu),
     .funct3(inst[14:12]),
     .funct7(inst[31:25]),
@@ -118,7 +118,7 @@ mef mef_control(
 
 alu alu(
     .Y  (y_alu),
-    .z  (z),
+    .zero  (z),
     .a  (op1),
     .b  (op2),
     .sel(fn_alu)
