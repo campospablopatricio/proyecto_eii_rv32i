@@ -7,3 +7,5 @@ module fn_and (
 );
     assign Y = a & b;
 endmodule
+
+//salida y es de 32bits
