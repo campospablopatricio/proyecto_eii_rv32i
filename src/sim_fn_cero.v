@@ -1,6 +1,4 @@
-//tiene una modificacion en la que va alternando el valor de a, para numeros impares lo hace 1
-//y para numeros pares cero.
-//asi en la salida puedo ver como el valor de Y va cambiando.
+//
 `include "fn_cero.v"
 
 module sim_fn_cero;

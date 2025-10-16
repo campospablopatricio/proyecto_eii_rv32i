@@ -14,7 +14,6 @@ Electrónica II para Ingeniería Electrónica. 2024
   - Función *desplazamiento a la izquierda* de un valor de 32 bit por la cantidad de bits indicada por un valor de 5 bit. Ingresa ceros por la derecha.
   - Función *desplazamiento a la derecha* de un valor de 32 bit por la cantidad de bits indicada por un valor de 5 bit. Cuenta con un selector de modo *con signo*. En modo sin signo ingresa ceros por la izquierda, en modo con signo copia el bit de signo (extensión de signo).
 - A partir de los componentes desarrollados en el punto anterior, diseña, describe a nivel estructural y evalúa mediante simulación una unidad aritmética-lógica de 32 bit con dos entradas de operando, una entrada de selección, una salida de resultado y una salida de cero, con las funciones dadas por la Tabla 1.
-- Diseña, describe a nivel comportamental y evalúa mediante simulación un registro de 32 bit con habilitación de escritura.
 
 Tabla 1: Funciones de la ALU.
 
@@ -33,10 +32,11 @@ Tabla 1: Funciones de la ALU.
 
 *Notas*:  *Sel* es la entrada de selección, de 4 bit. *A* y *B* son los operandos, de 32 bit. *Y* es el resultado, de 32 bit y *Z* es la salida de cero, de un bit. Los operadores ' $<<$ ' y ' $>>$ ' denotan desplazamiento a la izquierda y desplazamiento a la derecha respectivamente. Los operadores ' $=$ ' y ' $<$ ' denotan las operaciones relacionales *igual a* y *menor que*, que evalúan a $1$ si se cumple la condición y $0$ en caso contrario.
 
-- Describir en lenguaje de descripción de hardware y evaluar mediante simulación las siguientes memorias:
-  - Memoria RAM de dos puertos sincrónicos (lectura y escritura) de 256x32 bit.
-  - Conjunto de registros de 32x32 bit de tres puertos sincrónicos, dos de lectura y uno de escritura. El registro cero será de solo lectura y su valor será siempre '0'.
-
+- Describir en lenguaje de descripción de hardware y evaluar mediante simulación los siguientes elementos de memoria:
+  - Registro de 32 bit con reset sincrónico y habilitación.
+  - Memoria RAM de dos puertos sincrónicos (lectura y escritura) de 512x32 bit.
+  - Conjunto de registros de 32x32 bit de tres puertos sincrónicos, dos de lectura y uno de escritura. El registro cero será de solo lectura y su valor será siempre '0'.  
+*Nota:* La memoria RAM y el conjunto de registros deben ser especificadas de modo que puedan sintetizarse en bloques de BRAM de la familia Lattice iCE40. Esto requiere que *tanto los puertos de lectura como escritura sean sincrónicos*. Consultar [Memory Usage Guide for iCE40 Devices](https://www.latticesemi.com/m/%7E/media/LatticeSemi/Documents/ApplicationNotes/MO/MemoryUsageGuideforiCE40Devices.pdf?document_id=47775)
 - Describir el conjunto de registros de la arquitectura RISC-V
 - Estudiar, del conjunto de instrucciones RV32I
   - Describir la estructura de las instrucciones tipo R, I, S, B, U y J.
@@ -72,11 +72,9 @@ Figura 1: Diagrama esquemático del diseño final esperado
 
 Este proyecto incluye un Makefile que automatiza las tareas. Requiere tener instalado make para usar el makefile; GHDL para simular descripciones en VHDL; icarus verilog para simular descripciones en verilog; yosys y netlistsvg para generar diagramas; binutils de arquitectura riscv64-unknown-elf para compilar el programa de prueba. Por defecto el proyecto está en modo Verilog, para cambiara a vhdl usa `make modo_vhdl`. Para volver a modo verilog desde modo vhdl usa `make modo_verilog`.
 
-*PARA CREAR ARCHIVOS verilog/vhdl para un nuevo módulo/entidad usar `make nuevo_<modulo>` donde `<modulo>` es el nombre del nuevo módulo/entidad. Esto creará `src/<modulo>.v` conteniendo la descripción de una compuerta and de dos entradas y `src/sim_<modulo>.v` con su simulación. Luego pueden modificarse estos archivos para contener el diseño y la simulación deseados.
+Para crear archivos verilog/vhdl para un nuevo módulo/entidad usar `make nuevo_<modulo>` donde `<modulo>` es el nombre del nuevo módulo/entidad. Esto creará `src/<modulo>.v` / `src/<modulo>.vhd` conteniendo la descripción de una compuerta and de dos entradas y `src/sim_<modulo>.v` / `src/sim_<modulo>.v` con su simulación. Luego pueden modificarse estos archivos para contener el diseño y la simulación deseados.
 
-*PARA CORRER SIMULACION de un módulo utilizar `make <modulo>`. Esto compilará la simulación en `src/sim_<modulo>.v`, guardando el resultado en `build/modulo` y la ejecutará guardando la salida producida en la carpeta `resultados`.
-*CORRER SIMULACION `gtkwave resultados/<modulo>.vcd`
-
+Para correr la simulación de un módulo utilizar `make <modulo>`. Esto compilará la simulación en `src/sim_<modulo>.v` / `src/sim_<modulo>.vhd`, guardando el resultado en `build/modulo` y la ejecutará guardando la salida producida en la carpeta `resultados`.
 
 Para sintetizar un diseño y crear el diagrama esquemático del resultado utilizar `make diagrama_<modulo>`. El esquemático resultante será guardado en `resultados/<modulo>.svg`.
 
