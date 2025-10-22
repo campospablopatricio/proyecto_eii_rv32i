@@ -16,7 +16,8 @@ module sim_fn_xor ;
        a = 32'h0000_0000; b = 32'h0000_0000; #10;
        a = 32'h0000_0000; b = 32'hFFFF_FFFF; #10;
        a = 32'hFFFF_FFFF; b = 32'h0000_0000; #10;
-       a = 32'hFFFF_FFFF; b = 32'hFFFF_FFFF; #10;      
-        
+       a = 32'hFFFF_FFFF; b = 32'hFFFF_FFFF; #10;
+       a = 32'h12345678;  b = 32'h00FF00FF;  #10; 
+       a = 32'hDEADBEEF;  b = 32'h0F0F0F0F;  #10;      
     end
 endmodule
