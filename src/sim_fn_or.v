@@ -1,8 +1,9 @@
 `include "fn_or.v"
 module sim_fn_or ;
     integer i;
-    reg a,b;
-    wire Y;
+    reg [31:0] a,b;
+    wire [31:0] Y;
+
     fn_or dut (
         .Y (Y),
         .a (a),
@@ -12,9 +13,10 @@ module sim_fn_or ;
     initial begin
         $dumpfile("fn_or.vcd");
         $dumpvars(0);
-        for (i=0;i<4;i = i + 1) begin
-            {a,b} = i[1:0];
-            #10;
-        end
+       a = 32'h0000_0000; b = 32'h0000_0000; #10;
+       a = 32'h0000_0000; b = 32'hFFFF_FFFF; #10;
+       a = 32'hFFFF_FFFF; b = 32'h0000_0000; #10;
+       a = 32'hFFFF_FFFF; b = 32'hFFFF_FFFF; #10;
+        
     end
 endmodule
