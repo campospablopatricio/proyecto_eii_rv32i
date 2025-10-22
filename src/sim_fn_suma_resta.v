@@ -24,7 +24,9 @@ module sim_fn_suma_resta;
         // Caso 2: Resta (resta = 1)
         a = 32'd15; b = 32'd10; resta = 1;  // 15 - 10
         #10 
-
+        // Caso 3: Resta
+        a = 32'd10; b = 32'd15; resta = 1;  // 10 - 15
+        #10 
         $finish;
     end
 endmodule

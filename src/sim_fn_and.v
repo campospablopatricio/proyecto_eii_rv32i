@@ -3,7 +3,6 @@ module sim_fn_and ;
     integer i;
     reg [31:0]a;
     reg [31:0]b;
-
     wire [31:0]Y;
     fn_and dut (
         .Y (Y),

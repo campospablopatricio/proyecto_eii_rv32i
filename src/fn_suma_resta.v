@@ -4,7 +4,7 @@
 module fn_suma_resta (
     input  [31 : 0] a,
     input  [31 : 0] b,
-    input           resta,
+    input       resta,
     output [31 : 0] Y
 );
 
