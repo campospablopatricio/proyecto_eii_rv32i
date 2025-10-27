@@ -1,3 +1,7 @@
+//A partir de los componentes desarrollados en el punto anterior, diseña, describe a nivel estructural y 
+//evalúa mediante simulación una unidad aritmética-lógica de 32 bit con dos entradas de operando, una 
+//entrada de selección, una salida de resultado y una salida de cero, con las funciones dadas por la Tabla 1
+
 `include "fn_and.v"
 `include "fn_cero.v"
 `include "fn_des_der.v"
