@@ -22,7 +22,7 @@ module sim_reg32 ;
 
        initial begin
         $dumpfile("reg32.vcd");
-        $dumpvars(0);
+        $dumpvars(0, sim_reg32);
         rst=1;
         d={32{1'bx}}; //inicia el registro d con un valor indeterminado        
         load=1'bx;
