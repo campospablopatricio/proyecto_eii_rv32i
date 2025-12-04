@@ -1,3 +1,4 @@
+//Registro de 32 bit con reset sincrónico y habilitación.
 module reg32 (
     output reg [31:0] q,  // Salida del registro de 32 bits
     input  [31:0] d,      // Entrada de datos de 32 bits
