@@ -3,7 +3,6 @@ module ram #(parameter archivo = "") (
     input      [8:0]  dir_w,    // dirección de escritura (0..511)
     input             hab_w,    // habilitación de escritura
     input      [31:0] dat_w,    // dato a escribir (32 bits)
-    //input             clk_r,    // reloj de lectura
     input      [8:0]  dir_r,    // dirección de lectura (0..511)
     input             hab_r,    // habilitación de lectura
     output reg [31:0] dat_r     // dato leído (32 bits)
