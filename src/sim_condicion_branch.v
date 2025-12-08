@@ -1,3 +1,4 @@
+// Simulación de condicion_branch.
 `include "condicion_branch.v"
 module sim_condicion_branch ;
     wire z_branch;
@@ -10,13 +11,13 @@ module sim_condicion_branch ;
 
     initial begin
         $dumpfile("condicion_branch.vcd");
-        $dumpvars(0);
-        funct3 = 000;#10;
-        funct3 = 001;#10;
-        funct3 = 100;#10;
-        funct3 = 101;#10;
-        funct3 = 110;#10;
-        funct3 = 111;#10;
-            #10;
+        $dumpvars(0, sim_condicion_branch);
+        funct3 = 000; #10; // 000 -> BEQ
+        funct3 = 001; #10; // 001 -> BNE
+        funct3 = 100; #10; // 100 -> BLT
+        funct3 = 101; #10; // 101 -> BGE
+        funct3 = 110; #10; // 110 -> BLTU
+        funct3 = 111; #10; // 111 -> BGEU
+        #10;
         end
 endmodule
