@@ -1,19 +1,22 @@
 //- Diseñar una unidad de control (máquina de estado finito) capaz de ejecutar las instrucciones mencionadas en el 
 //apartado anterior.
+//     ESCRIBE -> CARGA -> DECODIFICA -> DIRECCION -> MEMORIA_EJECUTA -> ESCRIBE 
 
 module mef (
-    output reg esc_pc,
-    output reg branch,
-    output reg sel_dir,
-    output reg esc_mem,
-    output reg esc_inst,
-    output reg esc_reg,
-    output reg [2:0] sel_inmediato,
-    output reg [1:0] modo_alu,
+    output reg       esc_pc,         // habilita escritura en PC
+    output reg       branch,         // habilita actualización condicional de PC (branch)
+    output reg       sel_dir,        // 0: dirección = PC, 1: dirección = resultado ALU (Y)
+    output reg       esc_mem,        // habilita escritura en memoria de datos
+    output reg       esc_inst,       // habilita escritura en registro de instrucción (IR)
+    output reg       esc_reg,        // habilita escritura en banco de registros (rd)
+
+    output reg [2:0] sel_inmediato,  // selecciona tipo de inmediato (I, S, B, U, J)
+    output reg [1:0] modo_alu,       // modo para control_alu (00: suma, 01: I, 10: R, 11: branch)
     output reg [1:0] sel_op1,
     output reg [1:0] sel_op2,
     output reg [1:0] sel_y,
-    input      [6:0] op,
+
+    input      [6:0] op,             // opcode de la instrucción (inst[6:0])
     input       reset,
     input       clk
 ); 
@@ -40,130 +43,200 @@ module mef (
     always @(*)
     begin
         case (estado)
-            ESCRIBE : estado_sig = CARGA;
-            CARGA : estado_sig = DECODIFICA;
-            DECODIFICA : estado_sig = DIRECCION;
-            DIRECCION : estado_sig = MEMORIA_EJECUTA;
+
+            ESCRIBE         : estado_sig = CARGA;
+            CARGA           : estado_sig = DECODIFICA;
+            DECODIFICA      : estado_sig = DIRECCION;
+            DIRECCION       : estado_sig = MEMORIA_EJECUTA;
             MEMORIA_EJECUTA : estado_sig = ESCRIBE;
-            default : estado_sig = ESCRIBE; 
+            default         : estado_sig = ESCRIBE; 
+
         endcase
     end
 
       always @ (*) begin
-        //valores por defecto
-            esc_pc = 0;
-            branch = 0;
-            sel_dir = 0;
-            esc_mem = 0;
-            esc_reg = 0;
-            esc_inst = 0;
+// Lógica de salidas (combinacional)
+// - Primero: valores por defecto (todo en cero)
+// - Luego, según el estado (y a veces el opcode),
+//   se activan las señales que correspondan.            
+            esc_pc        = 0;
+            branch        = 0;
+            sel_dir       = 0;
+            esc_mem       = 0;
+            esc_reg       = 0;
+            esc_inst      = 0;
             sel_inmediato = 0;
-            modo_alu = 0;
-            sel_op1 = 0;
-            sel_op2 = 0;
-            sel_y = 0;            
-            
+            modo_alu      = 0;
+            sel_op1       = 0;
+            sel_op2       = 0;
+            sel_y         = 0;    
+
+// Comportamiento según el estado
+
             case(estado)
             CARGA: begin 
-                esc_inst = 1'b1 ;  
-                sel_op1  = 2'b00;  
-                sel_op2  = 2'b10;  
-                esc_pc   = 1'b1 ;  
-                sel_y    = 2'b01;  
-                modo_alu = 2'b00;  
+            // - inst* = mem[PC]
+            // - pc_inst* = PC        
+            // - PC* = PC + 4
+                  esc_inst = 1'b1;    // cargar registro de instrucción con dat_lectura
+                sel_op1  = 2'b00;   // A = PC
+                sel_op2  = 2'b10;   // B = 4
+                modo_alu = 2'b00;   // suma
+                sel_y    = 2'b01;   // Y = salida de la ALU (PC + 4)
+                esc_pc   = 1'b1;    // PC* = PC + 4
             end
 
-            DECODIFICA: ;          //se mantienen los valores por defecto y espero un ciclo para que se carguen los registros
+            DECODIFICA: ;
+             // - Lectura de rs1 y rs2 desde el banco de registros
+            //se mantienen los valores por defecto y espero un ciclo para que se carguen los registros
+       
             DIRECCION: 
+            // - Cálculo de direcciones / PC + inmediato
+            //   según tipo de instrucción.
                 case(op)
-                19,23,51,55: ;                //No hacen nada
+                19,23,51,55: ;                //I aritmetica, AUIPC, R, LUI, No hacen nada
 
                 //Para los que acceden a memoria
-                3,103: begin                   //instruccion 3 y 103 tipo I
-                    sel_inmediato = 3'b000;    //selecciono el tipo I
-                    sel_op2       =  2'b01;    //valor inmediato
-                    sel_op1       =  2'b10;    //selecciono Rs1
-                    modo_alu      =  2'b00;    //modo suma
+                 // LOAD (3) y JALR (103)
+                 // - I: dir = rs1 + imm_I
+                3,103: begin                // instrucciones tipo I
+                   sel_inmediato = 3'b000;  // inmediato tipo I
+                   sel_op2       = 2'b01;   // B = valor inmediato
+                   sel_op1       = 2'b10;   // A = Rs1
+                   modo_alu      = 2'b00;   // suma (dir = rs1 + imm)
                 end
-                35: begin                      //instruccion 35 tipo S
-                    sel_inmediato = 3'b001;    //selecciono el tipo S
-                    sel_op2       =  2'b01;    //valor inmediato
-                    sel_op1       =  2'b10;    //selecciono Rs1
-                    modo_alu      =  2'b00;    //modo suma
+                
+                // STORE (35)
+                // - S: dir = rs1 + imm_S
+                35: begin               // instrucción tipo S
+                    sel_inmediato = 3'b001;  // inmediato tipo S
+                    sel_op2       = 2'b01;   // B = valor inmediato
+                    sel_op1       = 2'b10;   // A = Rs1
+                    modo_alu      = 2'b00;   // suma
                 end
-                99: begin                       //instruccion 99 tipo B
-                    sel_inmediato = 3'b010;    //selecciono el tipo B
-                    sel_op2       = 2'b01;     //valor inmediato
-                    sel_op1       =  2'b01;    //valor actual
-                    modo_alu      =  2'b00;    //modo suma
+                
+                // BRANCH (99)
+                // - B: target = PC + imm_B
+                99: begin                       // instrucción tipo B
+                    sel_inmediato = 3'b010;  // inmediato tipo B
+                    sel_op2       = 2'b01;   // B = valor inmediato
+                    sel_op1       = 2'b01;   // A = PC actual
+                    modo_alu      = 2'b00;   // suma (PC + imm_B)
                 end
-                111: begin                     //instruccion 111 tipo J
-                    sel_inmediato = 3'b100;    //selecciono el tipo J
-                    sel_op2       =  2'b01;    //valor inmediato
-                    sel_op1       =  2'b01;    //valor actual
-                    modo_alu      =  2'b00;    //modo suma 
+                
+                // JAL (111)
+                // - J: target = PC + imm_J
+                111: begin                 // instrucción tipo J
+                    sel_inmediato = 3'b100;  // inmediato tipo J
+                    sel_op2       = 2'b01;   // B = valor inmediato
+                    sel_op1       = 2'b01;   // A = PC actual
+                    modo_alu      = 2'b00;   // suma (PC + imm_J)
                 end
                 endcase
-            MEMORIA_EJECUTA:
+
+            MEMORIA_EJECUTA:            
+            // - LOAD/STORE: usan la dirección calculada
+            // - BRANCH: comparan rs1/rs2 y, si corresponde, actualizan PC
+            // - R/I/U: hacen operación ALU
+            // - JAL/JALR: actualizan PC y preparan PC+4 para link
+
                 case(op)
-                3 : begin                       //instruccion 3 tipo B, acceso a memoria
-                    sel_y   = 2'b10;            //para tener la direccion del ciclo retardado    
-                    sel_dir = 1'b1;             //seleccion el resultado que habia quedado en sel_y y no el PC
-                                                // espero un ciclo para que lea al estar en la direccion
+
+                
+                // LOAD (3) (INSTRUCCION 3 TIPO B)
+                // - usa dirección calculada
+                //   en el estado DIRECCION
+                3 : begin                       
+                    sel_y   = 2'b10;            //Y = salida retardada    
+                    sel_dir = 1'b1;             //dirección memoria = Y (no PC)
+                                                // Se espera un ciclo para que la RAM coloque el dato en dat_lectura.
                 end  
-                35 : begin                      //acceso a memoria
-                    sel_y   = 2'b10;            //para tener la direccion del ciclo retardado
-                    sel_dir = 1'b1; 
-                    esc_mem = 1'b1;             //para habilitar el acceso a memoria, 
+                
+                // STORE (35)
+                // - usa dirección calculada
+                //   y escribe rs2 en memoria
+                35 : begin                     
+                    sel_y   = 2'b10;            // Y = salida retardada
+                    sel_dir = 1'b1;             // dirección memoria = Y
+                    esc_mem = 1'b1;             // habilita escritura en memoria 
                 end                             //el dat_escritura esta en dat_2 es RS2 porque ya esta cableado directo
-                99: begin                       //actualiza el pc, no siempre actualizan el PC necesita de la ALU
-                    sel_y = 2'b10;
-                                                //habilita el PC si z_branchi es igual a Z (XNOR)
-                    branch = 1;
-                    sel_op1  = 2'b10;           //este va a la ALU
-                    sel_op2  = 2'b00;           //este va a la ALU
-                    modo_alu = 2'b11;           //instruccion 99
+                
+                
+                // BRANCH (99)
+                // - decide si actualizar PC
+                99: begin                       
+                    sel_y = 2'b10;              // Y = PC + imm_B
+                        branch  = 1'b1;         // habilita lógica condicional de PC
+                        sel_op1 = 2'b10;        // A = RS1   (para comparar)
+                        sel_op2 = 2'b00;        // B = RS2   (para comparar)
+                        modo_alu= 2'b11;        // modo branch en control_alu
                 end
-                19: begin                       //instruccion 19 tipo I, Modo especial
-                    sel_inmediato = 3'b000;     //selecciono el tipo I
-                    sel_op2  = 2'b01;           //salida del valor inmediato
-                    sel_op1  = 2'b10;           //Rs1
-                    modo_alu = 2'b01;           
+
+
+                // OP-IMM (19) - tipo I aritmético
+                19: begin      
+                        sel_inmediato = 3'b000;  // tipo I
+                        sel_op2       = 2'b01;   // B = inmediato
+                        sel_op1       = 2'b10;   // A = RS1
+                        modo_alu      = 2'b01;   // modo especial I    
                 end 
-                51: begin                       //instruccion 51 tipo S
-                    sel_op2  = 2'b00;           //RS2
-                    sel_op1  = 2'b10;           //RS1
-                    modo_alu = 2'b10;
+
+                // OP (51) - tipo R
+                51: begin         
+                        sel_op2  = 2'b00; // B = RS2
+                        sel_op1  = 2'b10; // A = RS1
+                        modo_alu = 2'b10; // modo R
+                end  
+                
+                // AUIPC (23) - tipo U
+                // - resultado = PC + imm_U
+                23: begin                 
+                        sel_inmediato = 3'b011;  // tipo U
+                        sel_op1       = 2'b01;   // A = PC (pc_inst)
+                        sel_op2       = 2'b01;   // B = inmediato U
+                        modo_alu      = 2'b00;   // suma
                 end   
-                23: begin                      //instruccion 23 tipo U
-                    sel_inmediato = 3'b011;    //selecciono el tipo U
-                    sel_op1       = 2'b01;     //pc_inst
-                    sel_op2       = 2'b01;     //valor inmediato
-                    modo_alu      = 2'b00;     //modo suma
+
+                
+                // LUI (55) - tipo U
+                // - resultado = imm_U
+                55: begin      
+                        sel_inmediato = 3'b011;  // tipo U
+                        sel_op1       = 2'b11;   // A = 0
+                        sel_op2       = 2'b01;   // B = inmediato U
+                        modo_alu      = 2'b00;   // suma
                 end   
-                55: begin                      //intruccion 55 tipo U
-                    sel_inmediato = 3'b011;    //selecciono el tipo U
-                    sel_op1       = 2'b11;     //valor 0
-                    sel_op2       = 2'b01;     //valor inmediato
-                    modo_alu      = 2'b00;     //modo suma
-                end   
+
+                
+                // JALR (103) y JAL (111)
                 103,111: begin
-                    sel_y    = 2'b10;          //la salida de la ALU del ciclo anterior
-                    esc_pc   = 1'b1;           //para habilitar escritura en PC
-                    sel_op2  = 2'b10;          //es la suma de 4
-                    sel_op1  = 2'b01;          //valor anterior,calcula la direccion sig y lo guarda
-                    modo_alu = 2'b00;          //suma
+                        sel_y    = 2'b10;  // Y = salida de la ALU del ciclo anterior
+                        esc_pc   = 1'b1;   // habilita escritura en PC
+                        sel_op2  = 2'b10;  // B = 4
+                        sel_op1  = 2'b01;  // A = PC actual
+                        modo_alu = 2'b00;  // suma 
                 end
                 endcase
-            ESCRIBE:
+            ESCRIBE:            
+            // - Escribe en banco de registros (rd)
+            //    resultados de ALU (R, I, U, J)
+            //    resultados de memoria (LOAD)
+
                 case(op)
+                
                 19,23,51,55,103,111 : begin
-                   sel_y   = 2'b10;             //salida retardada
-                   esc_reg = 1'b1;              //habilitacion, guarda el valor del paso anterior de la ALU en el reg de destino
-                end
+                        sel_y   = 2'b10; // Y = salida retardada (resultado ALU)
+                        esc_reg = 1'b1;  // escribe en registro destino (rd)
+                        end
+                
+            // LOAD (3)
+            // - escribe en rd el dato de memoria
                 3: begin
-                   sel_y   = 2'b00;
-                   esc_reg = 1'b1; 
+                        sel_y   = 2'b00; // Y = dato de memoria (dat_lectura)
+                        esc_reg = 1'b1;  // escribe en rd
+                        
+            // STORE (35) y BRANCH (99) no escriben rd
+
                 end
                 endcase
             endcase
