@@ -5,6 +5,7 @@ module valor_inmediato (
     input      [ 2:0] tipo       // selector de tipo de inmediato (I/S/B/U/J)
 );
     always @(*) begin
+        inmediato = 32'b0; //se asignaa un valor por defecto porque sino da latch
         case (tipo)
 
             3'b000: 
