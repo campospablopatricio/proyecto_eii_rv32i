@@ -15,7 +15,7 @@ module cpu (
     output      [31:0]  dir,
     output      [31:0]  dat_escritura
    
-);
+); 
 
 wire        esc_pc;
 wire        branch;
@@ -190,6 +190,7 @@ always @(*) begin
             2'b00: op2 = rs2;
             2'b01: op2 = inmediato;
             2'b10: op2 = 4;
+            2'b11: op2 = 2'b00;
         endcase
 end
 
@@ -210,6 +211,7 @@ always @(*) begin
             2'b00: y = dat_lectura;
             2'b01: y = y_alu;
             2'b10: y = y_alu_r;
+            2'b11: y = 2'b00;
         endcase
 end
 
